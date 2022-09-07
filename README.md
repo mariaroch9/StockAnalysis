@@ -20,7 +20,156 @@ This wasn’t a great year for stocks, as highlighted in red the chart above. Al
 ### Both years
 Looking at both the years we can conclude that TERP was the most stable in both years. ENPH performed well and gave positive returns of 129% and 82% in the years  2017 and 2018. Looking at the positive returns given by ENPH Steve’s parents may definitely want to place their bets on that one!
 
+
+## Original Code: 
+
+This code includes 2 arrays, Starting Price and Ending price. 
+
+```
+
+'3a) Initialize variables for starting price and ending price
+
+Dim startingPrice(12) As Single
+Dim endingPrice(12) As Single
+
+tickerindex = 0
+
+'3b) Activate data worksheet
+Worksheets(yearValue).Activate
+
+'3c) Get the number of rows to loop over
+RowCount = Cells(Rows.Count, "A").End(xlUp).Row
+
+'4 ) loop through the tickers
+For i = 0 To 11
+
+TotalVolume(i) = 0
+
+Next i
+
+'5 loop through rows in data
+
+For j = 2 To RowCount
+
+      '5a) Get total volume for current ticker
+      
+      If Cells(j, 1).Value = tickers(tickerindex) Then
+      
+      TotalVolume(tickerindex) = TotalVolume(tickerindex) + Cells(j, 8).Value
+      
+      End If
+      
+       '5b) get starting price for current ticker
+    
+    If Cells(j, 1).Value = tickers(tickerindex) And Cells(j - 1, 1) <> tickers(tickerindex) Then
+    
+    startingPrice(tickerindex) = Cells(j, 6).Value
+    
+    End If
+    
+       '5c) get ending price for current ticker
+        If Cells(j, 1).Value = tickers(tickerindex) And Cells(j + 1, 1) <> tickers(tickerindex) Then
+    
+       endingPrice(tickerindex) = Cells(j, 6).Value
+    
+       tickerindex = tickerindex + 1
+       
+       End If
+
+Next j
+
+For i = 0 To 11
+
+'6) Output data for current ticker
+  Worksheets("All Stocks Analysis").Activate
+  
+ If startingPrice(i) <> 0 Then
+ Cells(4 + i, 1).Value = tickers(i)
+
+Cells(4 + i, 2).Value = TotalVolume(i)
+
+Cells(4 + i, 3).Value = (endingPrice(i) / startingPrice(i)) - 1
+
+Else
+
+Cells(4 + i, 3).Value = 0
+ 
+ 
+End If
+
+Next i
+
+```
+
+## Refactored code: 
+I made use of 4 Arrays, ticker volume, ticker index, starting price and ending price. All the 4 arrays are looped through to output the Ticker, Total Daily Volume, and Return. Finally, I tried to include a description for each line of code. All these changes have made the code more logical and the execution time is reduced. 
+
+```
+ '3a) Increase volume for current ticker
+        
+      If Cells(i, 1).Value = tickers(tickerindex) Then
+      
+      TotalVolume(tickerindex) = TotalVolume(tickerindex) + Cells(i, 8).Value
+      
+     End If
+      
+        '3b) Check if the current row is the first row with the selected tickerIndex.
+        'If  Then
+        
+     If Cells(i, 1).Value = tickers(tickerindex) And Cells(i - 1, 1) <> tickers(tickerindex) Then
+    
+    startingPrice(tickerindex) = Cells(i, 6).Value
+    
+    End If
+        'End If
+        
+        '3c) check if the current row is the last row with the selected ticker
+         'If the next row’s ticker doesn’t match, increase the tickerIndex.
+        'If  Then
+            
+        If Cells(i, 1).Value = tickers(tickerindex) And Cells(i + 1, 1) <> tickers(tickerindex) Then
+    
+       endingPrice(tickerindex) = Cells(i, 6).Value
+    
+       tickerindex = tickerindex + 1
+       
+       End If
+
+       '3d Increase the tickerIndex.
+  
+   If Cells(i, 1).Value = tickers(tickerindex) And Cells(i + 1, 1) <> tickers(tickerindex) Then
+   tickerindex = tickerindex + 1
+   
+   End If
+     
+        'End If
+    
+Next i
+    
+    '4) Loop through your arrays to output the Ticker, Total Daily Volume, and Return.
+    For i = 0 To 11
+        
+Worksheets("All Stocks Analysis").Activate
+If startingPrice(i) <> 0 Then
+    
+ Cells(4 + i, 1).Value = tickers(i)
+
+Cells(4 + i, 2).Value = TotalVolume(i)
+
+Cells(4 + i, 3).Value = (endingPrice(i) / startingPrice(i)) - 1
+
+Else
+
+Cells(4 + i, 3).Value = 0
+ 
+End If
+        
+    Next i
+    
+ ```   
+
 ## Execution times
+
 Comparing the execution times of the original script and the refactored script
 
 ### For the year 2017. The original code took 0.32 seconds to run while the. Refactored code ran in 0.08 seconds. 
