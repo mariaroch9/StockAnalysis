@@ -27,78 +27,88 @@ This code includes 2 arrays, Starting Price and Ending price.
 
 ```
 
-'3a) Initialize variables for starting price and ending price
 
-Dim startingPrice(12) As Single
-Dim endingPrice(12) As Single
+Sub AllStocksAnalysis()
 
-tickerindex = 0
+Dim startTime As Single
+Dim endTime  As Single
 
-'3b) Activate data worksheet
-Worksheets(yearValue).Activate
+    yearValue = InputBox("What year would you like to run the analysis on?")
 
-'3c) Get the number of rows to loop over
-RowCount = Cells(Rows.Count, "A").End(xlUp).Row
-
-'4 ) loop through the tickers
-For i = 0 To 11
-
-TotalVolume(i) = 0
-
-Next i
-
-'5 loop through rows in data
-
-For j = 2 To RowCount
-
-      '5a) Get total volume for current ticker
-      
-      If Cells(j, 1).Value = tickers(tickerindex) Then
-      
-      TotalVolume(tickerindex) = TotalVolume(tickerindex) + Cells(j, 8).Value
-      
-      End If
-      
-       '5b) get starting price for current ticker
+    startTime = Timer
     
-    If Cells(j, 1).Value = tickers(tickerindex) And Cells(j - 1, 1) <> tickers(tickerindex) Then
-    
-    startingPrice(tickerindex) = Cells(j, 6).Value
-    
-    End If
-    
-       '5c) get ending price for current ticker
-        If Cells(j, 1).Value = tickers(tickerindex) And Cells(j + 1, 1) <> tickers(tickerindex) Then
-    
-       endingPrice(tickerindex) = Cells(j, 6).Value
-    
-       tickerindex = tickerindex + 1
+   '1) Format the output sheet on All Stocks Analysis worksheet
+   Worksheets("All Stocks Analysis").Activate
+   Range("A1").Value = "All Stocks (yearValue)"
+   'Create a header row
+   Cells(3, 1).Value = "Ticker"
+   Cells(3, 2).Value = "Total Daily Volume"
+   Cells(3, 3).Value = "Return"
+
+   '2) Initialize array of all tickers
+   Dim tickers(11) As String
+   tickers(0) = "AY"
+   tickers(1) = "CSIQ"
+   tickers(2) = "DQ"
+   tickers(3) = "ENPH"
+   tickers(4) = "FSLR"
+   tickers(5) = "HASI"
+   tickers(6) = "JKS"
+   tickers(7) = "RUN"
+   tickers(8) = "SEDG"
+   tickers(9) = "SPWR"
+   tickers(10) = "TERP"
+   tickers(11) = "VSLR"
+   
+   '3a) Initialize variables for starting price and ending price
+   
+   Dim startingPrice As Single
+   Dim endingPrice As Single
+   
+   '3b) Activate data worksheet
+   Worksheets(yearValue).Activate
+   
+   '3c) Get the number of rows to loop over
+   RowCount = Cells(Rows.Count, "A").End(xlUp).Row
+
+   '4) Loop through tickers
+   For i = 0 To 11
+       ticker = tickers(i)
+       TotalVolume = 0
        
-       End If
+   '5) loop through rows in the data
+       Worksheets("2018").Activate
+       For j = 2 To RowCount
+           
+   '5a) Get total volume for current ticker
+           If Cells(j, 1).Value = ticker Then
 
-Next j
+               TotalVolume = TotalVolume + Cells(j, 8).Value
 
-For i = 0 To 11
+           End If
+    '5b) get starting price for current ticker
+           If Cells(j - 1, 1).Value <> ticker And Cells(j, 1).Value = ticker Then
 
-'6) Output data for current ticker
-  Worksheets("All Stocks Analysis").Activate
-  
- If startingPrice(i) <> 0 Then
- Cells(4 + i, 1).Value = tickers(i)
+               startingPrice = Cells(j, 6).Value
 
-Cells(4 + i, 2).Value = TotalVolume(i)
+           End If
 
-Cells(4 + i, 3).Value = (endingPrice(i) / startingPrice(i)) - 1
+    '5c) get ending price for current ticker
+           If Cells(j + 1, 1).Value <> ticker And Cells(j, 1).Value = ticker Then
 
-Else
+               endingPrice = Cells(j, 6).Value
 
-Cells(4 + i, 3).Value = 0
- 
- 
-End If
+           End If
+           
+       Next j
+       
+    '6) Output data for current ticker
+       Worksheets("All Stocks Analysis").Activate
+       Cells(4 + i, 1).Value = ticker
+       Cells(4 + i, 2).Value = TotalVolume
+       Cells(4 + i, 3).Value = endingPrice / startingPrice - 1
 
-Next i
-
+   Next i
 ```
 
 ## Refactored code: 
